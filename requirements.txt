@@ -75,7 +75,6 @@ sqlparse==0.5.3
 starlette==0.46.2
 sympy==1.14.0
 tifffile==2025.5.26
-torchvision==0.22.1+cpu
 trio==0.30.0
 trio-websocket==0.12.2
 typing-inspection==0.4.0
