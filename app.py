@@ -1,22 +1,26 @@
+import os
 import asyncio
+from threading import Thread
+from fastapi import FastAPI
+import uvicorn
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message
 
-# ✅ Tokenni to‘g‘ri yoz (BotFather bergan token)
-TOKEN = "7494125545:AAF-gXKoiYfyiYNx2xsJFATBxG42kNZKz3g"
+# Token (Render'da ENV'dan o'qiladi)
+TOKEN = os.getenv("TOKEN", "7494125545:AAF-gXKoiYfyiYNx2xsJFATBxG42kNZKz3g")
 
 # Bot va dispatcher
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
-# O'quvchilar ma'lumotlari (namuna)
+# O'quvchilar ma'lumotlari
 students = {
     "Salohiddin": {
         "Jurnaldagi raqam": "1",
         "F.I.Sh": "Adamboev Salohiddin Alisher o‘g‘li",
         "Telefon": "+998999532270",
         "Guvohnoma": "I-QQ 0236050",
-        "Tug'ilgan sana": "23.08.2009",
+        "Tug'ilgan sana": 8/23/2009,
         "JSHSHR": "52308097350024",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -25,7 +29,7 @@ students = {
         "F.I.Sh": "Ataxonova Surayyo G'ayratjon qiz",
         "Telefon": "+998882090112",
         "Guvohnoma": "I-QQ 0242841",
-        "Tug'ilgan sana": "01.10.2009",
+        "Tug'ilgan sana": 10/1/2009,
         "JSHSHR": "60110097350026",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -34,7 +38,7 @@ students = {
         "F.I.Sh": "Bozorbayeva Maftuna Murodjon qizi",
         "Telefon": "+998931597900",
         "Guvohnoma": "I-QQ 0243070",
-        "Tug'ilgan sana": "10/10/2009",
+        "Tug'ilgan sana": 10/10/2009,
         "JSHSHR": "61010097350066",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -43,7 +47,7 @@ students = {
         "F.I.Sh": "Bekpo'latov Alibek O'ktam o'g'li",
         "Telefon": "+998996900919",
         "Guvohnoma": "I-QQ 0208642",
-        "Tug'ilgan sana": "04/02/2009",
+        "Tug'ilgan sana": 4/2/2009,
         "JSHSHR": "50204097350070",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -52,7 +56,7 @@ students = {
         "F.I.Sh": "Baltabayev Bobur Umidjon o'g'li",
         "Telefon": "+998992174082",
         "Guvohnoma": "I-QQ 0208438",
-        "Tug'ilgan sana": "03/07/2009",
+        "Tug'ilgan sana": 3/7/2009,
         "JSHSHR": "50703097350041",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -61,7 +65,7 @@ students = {
         "F.I.Sh": "Baltabayeva Maftuna Bekjon qizi",
         "Telefon": "+998997024082",
         "Guvohnoma": "I-QQ 0243095",
-        "Tug'ilgan sana": "19/10/2009",
+        "Tug'ilgan sana": 10/19/2009,
         "JSHSHR": "61910097350072",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -70,7 +74,7 @@ students = {
         "F.I.Sh": "Buabayev Arislon Alisher o'g'li",
         "Telefon": "+998990350451",
         "Guvohnoma": "I-QQ 0239401",
-        "Tug'ilgan sana": "04/09/2009",
+        "Tug'ilgan sana": 9/4/2009,
         "JSHSHR": "50409097350046",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -79,7 +83,7 @@ students = {
         "F.I.Sh": "Davletboyeva Gulchehra",
         "Telefon": "+998999582504",
         "Guvohnoma": "I-QQ 0265170",
-        "Tug'ilgan sana": "06/04/2010",
+        "Tug'ilgan sana": 4/6/2010,
         "JSHSHR": "60604107350055",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -88,7 +92,7 @@ students = {
         "F.I.Sh": "Karimbayeva Mohida Rustam qizi",
         "Telefon": "+998973491028",
         "Guvohnoma": "I-QQ 0243127",
-        "Tug'ilgan sana": "22/10/2009",
+        "Tug'ilgan sana": 10/22/2009,
         "JSHSHR": "62210097350047",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -97,7 +101,7 @@ students = {
         "F.I.Sh": "Kurbanbayeva Maftuna",
         "Telefon": "+998912694612",
         "Guvohnoma": "I-QQ 0253223",
-        "Tug'ilgan sana": "31/01/2010",
+        "Tug'ilgan sana": 1/31/2010,
         "JSHSHR": "63101107350050",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
@@ -106,11 +110,11 @@ students = {
         "F.I.Sh": "Murodova Maftuna Ortiqbay qizi",
         "Telefon": "+998996808487",
         "Guvohnoma": "I-QQ 0245962",
-        "Tug'ilgan sana": "13/11/2009",
+        "Tug'ilgan sana": 11/13/2009,
         "JSHSHR": "61311097350086",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
-        "Mashhura": {
+    "Mashhura": {
         "Jurnaldagi raqam": "12",
         "F.I.Sh": "Matkarimov Mashhura Mamud qizi",
         "Telefon": "+998992207983",
@@ -237,15 +241,13 @@ students = {
         "JSHSHR": "52509097350113",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
-    # ❗️ Qolganlarini ham xuddi shunday sanalarni string qilib yozib chiqishingiz kerak
+    # ❗️ qolganlarini ham shu uslubda yozishingiz kerak
 }
-
 
 # Start komandasi
 @dp.message(F.text == "/start")
 async def start_cmd(message: Message):
     await message.answer("Assalomu alaykum!\nO‘quvchi ismini kiriting:")
-
 
 # O'quvchi ismi qabul qilganda
 @dp.message()
@@ -269,11 +271,21 @@ async def get_student_info(message: Message):
 
     await message.answer(response)
 
+# --- Render uchun FastAPI server ---
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"status": "Bot ishlayapti!"}
 
 # Botni ishga tushirish
-async def main():
+async def start_bot():
     await dp.start_polling(bot)
 
+def run_bot():
+    asyncio.run(start_bot())
 
+# Bot va FastAPI ni parallel ishlatish
 if __name__ == "__main__":
-    asyncio.run(main())
+    Thread(target=run_bot).start()
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
