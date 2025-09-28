@@ -174,7 +174,7 @@ students = {
         "Telefon": "+998997940126",
         "Passport raqam": "AE2693500",
         "Guvohnoma": "I-QQ 0224074",
-        "Tug'ilgan sana": 5/8/2009,
+        "Tug'ilgan sana": "5/8/2009",
         "JSHSHR": "50805097350024",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
