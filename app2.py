@@ -6,14 +6,22 @@ import uvicorn
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message
 
-# Token (Render'da ENV'dan o'qiladi)
-TOKEN = os.getenv("TOKEN", "7494125545:AAF-gXKoiYfyiYNx2xsJFATBxG42kNZKz3g")
+import os
+from dotenv import load_dotenv   # ✅ import qilish kerak
 
-# Bot va dispatcher
+# .env faylni yuklash
+load_dotenv()
+
+TOKEN = os.getenv("TOKEN")
+if not TOKEN:
+    raise ValueError("❌ Bot token topilmadi! Render Environment Variables da TOKEN qo'shilsin.")
+
+
+# Bot va Dispatcher
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
-# O'quvchilar ma'lumotlari
+# --- O'quvchilar ma'lumotlari (qisqartirilgan, o'zing to'ldirasan) ---
 students = {
     "Salohiddin": {
         "Jurnaldagi raqam": "1",
@@ -241,19 +249,18 @@ students = {
         "JSHSHR": "52509097350113",
         "Qo‘shimcha": "10-A sinf o‘quvchisi"
     },
-    # ❗️ qolganlarini ham shu uslubda yozishingiz kerak
+    # ❗️ qolganlarin
+    # ...
 }
 
-# Start komandasi
+# --- Telegram bot handlerlari ---
 @dp.message(F.text == "/start")
 async def start_cmd(message: Message):
     await message.answer("Assalomu alaykum!\nO‘quvchi ismini kiriting:")
 
-# O'quvchi ismi qabul qilganda
 @dp.message()
 async def get_student_info(message: Message):
     name = message.text.strip()
-
     if name in students:
         data = students[name]
         response = (
@@ -268,24 +275,25 @@ async def get_student_info(message: Message):
         )
     else:
         response = "❌ Bunday o‘quvchi topilmadi."
-
     await message.answer(response)
 
-# --- Render uchun FastAPI server ---
+# --- FastAPI server ---
 app = FastAPI()
 
 @app.get("/")
 async def root():
     return {"status": "Bot ishlayapti!"}
 
-# Botni ishga tushirish
+# --- Botni ishga tushirish ---
 async def start_bot():
     await dp.start_polling(bot)
 
 def run_bot():
-    asyncio.run(start_bot())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(start_bot())
 
-# Bot va FastAPI ni parallel ishlatish
+# --- Render parallel ishga tushirishi ---
 if __name__ == "__main__":
-    Thread(target=run_bot).start()
+    Thread(target=run_bot, daemon=True).start()
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 10000)))
